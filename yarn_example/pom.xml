@@ -1,0 +1,75 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.alpine</groupId>
+        <artifactId>hadoop_example</artifactId>
+        <version>1.0</version>
+    </parent>
+    <groupId>com.alpine.yarn</groupId>
+    <artifactId>yarn_example</artifactId>
+    <version>1.0</version>
+    <name>yarn_example</name>
+
+    <properties>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-yarn-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- for some reason, there will be a jdk version 1.3 error when compiling,
+                so have to do this -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <fork>true</fork>
+                    <meminitial>1024m</meminitial>
+                    <maxmem>2044m</maxmem>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.alpine.runner.WordCount</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
+                        <!--<phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
+                        <!--<goals>-->
+                            <!--<goal>single</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
