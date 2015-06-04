@@ -4,8 +4,11 @@ import com.alpine.hadoop.hcatalog.HCatMapper;
 import com.alpine.hadoop.hcatalog.HCatReducer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.WritableComparable;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.GenericOptionsParser;
@@ -20,7 +23,9 @@ import org.apache.hive.hcatalog.mapreduce.HCatInputFormat;
 import org.apache.hive.hcatalog.mapreduce.HCatOutputFormat;
 import org.apache.hive.hcatalog.mapreduce.OutputJobInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
+import org.apache.hive.hcatalog.cli.HCatCli;
 
+import java.io.FileInputStream;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 
@@ -55,15 +60,16 @@ public class HCatalogColumnFilter extends Configured implements Tool {
         conf.set("yarn.application.classpath", "/etc/hadoop/conf,/usr/lib/hadoop/*,/usr/lib/hadoop/lib/*,/usr/lib/hadoop-hdfs/*,/usr/lib/hadoop-hdfs/lib/*,/usr/lib/hadoop-yarn/*,/usr/lib/hadoop-yarn/lib/*,/usr/lib/hadoop-mapreduce/*,/usr/lib/hadoop-mapreduce/lib/*");
         conf.set("yarn.resourcemanager.address", "awshdp2regression.alpinenow.local:8050");
         conf.set("yarn.resourcemanager.scheduler.address", "awshdp2regression.alpinenow.local:8030");
-        conf.set("hive.metastore.client.connect.retry.delay", "1");
-        conf.set("hive.metastore.client.socket.timeout", "600");
+        // have to do these two set to overwrite the default hive-site.xml
+        //conf.set("hive.metastore.client.connect.retry.delay", "1");
+        //conf.set("hive.metastore.client.socket.timeout", "600");
         conf.set("hive.metastore.uris", "thrift://awshdp2regression.alpinenow.local:9083");
 
-        conf.set("javax.jdo.option.ConnectionURL", "jdbc:mysql://awshdp2regression.alpinenow.local/hivemetastoredb?createDatabaseIfNotExist=true");
+        //conf.set("javax.jdo.option.ConnectionURL", "jdbc:mysql://awshdp2regression.alpinenow.local/hivemetastoredb?createDatabaseIfNotExist=true");
 
-        conf.set("javax.jdo.option.ConnectionDriverName", "org.mysql.jdbc.Driver");
-        conf.set("javax.jdo.option.ConnectionUserName", "hive");
-        conf.set("javax.jdo.option.ConnectionPassword", "hive");
+        //conf.set("javax.jdo.option.ConnectionDriverName", "org.mysql.jdbc.Driver");
+        //conf.set("javax.jdo.option.ConnectionUserName", "hive");
+        //conf.set("javax.jdo.option.ConnectionPassword", "hive");
         args = new GenericOptionsParser(conf, args).getRemainingArgs();
 
         // Get the input and output table names as arguments
@@ -84,6 +90,7 @@ public class HCatalogColumnFilter extends Configured implements Tool {
             System.err.println(args[1] + " is not exists, create it");
             client.createTable(tableDesc);
         }
+
         for (String name: client.listTableNamesByPattern("default", "*")) {
             System.err.println(name);
         }
@@ -92,8 +99,6 @@ public class HCatalogColumnFilter extends Configured implements Tool {
 
         // Assume the default database
         String dbName = null;
-
-
         Job job = Job.getInstance(conf, "HCatalogColumnFilter");
         /*Set the input table*/
         HCatInputFormat.setInput(job, dbName, inputTableName);
@@ -101,8 +106,6 @@ public class HCatalogColumnFilter extends Configured implements Tool {
         job.setJar("/Users/Hao/workspace/hadoop_example/hcatalog_example/target/hcatalog_example-1.0.jar");
 
         HCatSchema inputSchema = HCatInputFormat.getTableSchema(job.getConfiguration());
-
-
         System.err.println("INFO: input schema is :" + inputSchema);
         System.err.println("INFO: input field is:" + inputSchema.getFieldNames());
         job.setInputFormatClass(HCatInputFormat.class);
@@ -112,8 +115,9 @@ public class HCatalogColumnFilter extends Configured implements Tool {
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(WritableComparable.class);
         job.setOutputValueClass(DefaultHCatRecord.class);
-
+        //FileOutputFormat.setOutputPath(job, new Path(outputTableName));
 		/*Set the output table*/
+        FileInputFormat.addInputPath(job, new Path("Input"));
         HCatOutputFormat.setOutput(job,
                 OutputJobInfo.create(dbName, outputTableName, null));
         /**
@@ -128,7 +132,6 @@ public class HCatalogColumnFilter extends Configured implements Tool {
                 + outputSchema);
         HCatOutputFormat.setSchema(job, outputSchema);
         job.setOutputFormatClass(HCatOutputFormat.class);
-
         return (job.waitForCompletion(true) ? 0 : 1);
     }
 }

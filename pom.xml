@@ -9,6 +9,7 @@
     <modules>
         <module>yarn_example</module>
         <module>hcatalog_example</module>
+        <module>embeded_pig_example</module>
     </modules>
 
     <properties>
@@ -41,6 +42,16 @@
             </releases>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>repo.alpinenow.local</id>
+            <url>http://repo.alpinenow.local/artifactory/repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
