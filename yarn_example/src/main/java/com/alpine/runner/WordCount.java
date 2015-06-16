@@ -33,7 +33,7 @@ public class WordCount extends Configured implements Tool {
         //  conf.set("mapred.jar", "/Users/zhaoyong/git/codeboyyong/hadoop-sample/wordcount_cli/target/wordcount_cli-1.0.jar");
 
         Job job = new Job(conf);
-        job.setJarByClass(WordCount.class);
+        //job.setJarByClass(WordCount.class);
 
         //Providing the mapper and reducer class names
         job.setMapperClass(WCTokenizerMapper.class);
@@ -50,7 +50,7 @@ public class WordCount extends Configured implements Tool {
 
     public static void main(final String[] args) throws Exception {
         UserGroupInformation ugi = UserGroupInformation
-                .createRemoteUser("hdfs");
+                .createRemoteUser("mapred");
         ugi.doAs(new PrivilegedExceptionAction<WordCount>() {
             public WordCount run() throws Exception {
                 WordCount mr = new WordCount();

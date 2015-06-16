@@ -19,13 +19,12 @@
     <property>
         <name>mapreduce.jobhistory.address </name>
         <value>cdh5nn.alpinenow.local:10020</value>
-
     </property>
-    <property>
+    <!--<property>-->
 
-        <name>mapreduce.jobhistory.webapp.address</name>
-        <value>cdh5nn.alpinenow.local:19888</value>
-    </property>
+        <!--<name>mapreduce.jobhistory.webapp.address</name>-->
+        <!--<value>cdh5nn.alpinenow.local:19888</value>-->
+    <!--</property>-->
 
     <property>
         <name>yarn.app.mapreduce.am.staging-dir</name>

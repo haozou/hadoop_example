@@ -9,7 +9,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 /***
  * take a simple test and split by token
- * @author codeboyyong
+ * @author hao
  *
  */
 public class WCTokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
