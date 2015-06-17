@@ -46,17 +46,7 @@
         $HADOOP_HOME/lib/hadoop-mapreduce/*,$HADOOP_COMMON_HOME/share/hadoop/common/*,
         $HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,
         $HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,
-        $HADOOP_YARN_HOME/share/hadoop/yarn/lib/*,/etc/hadoop/conf,/usr/lib/hadoop/*,
-        /usr/lib/hadoop/lib/*,/usr/lib/hadoop-hdfs/*,/usr/lib/hadoop-hdfs/lib/*,/usr/lib/hadoop-yarn/*,
-        /usr/lib/hadoop-yarn/lib/*,/usr/lib/hadoop-mapreduce/*,/usr/lib/hadoop-mapreduce/lib/*,
-        $HADOOP_CONF_DIR,/usr/phd/current/hadoop-client/*,/usr/phd/current/hadoop-client/lib/*,
-        /usr/phd/current/hadoop-hdfs-client/*,/usr/phd/current/hadoop-hdfs-client/lib/*,
-        /usr/phd/current/hadoop-yarn-client/*,/usr/phd/current/hadoop-yarn-client/lib/*,
-        /usr/phd/current/hadoop-mapreduce-client/*,/usr/phd/current/hadoop-client/client/*,
-        $HADOOP_CONF_DIR,/usr/hdp/current/hadoop-client/*,/usr/hdp/current/hadoop-client/lib/*,
-        /usr/hdp/current/hadoop-hdfs-client/*,/usr/hdp/current/hadoop-hdfs-client/lib/*,
-        /usr/hdp/current/hadoop-yarn-client/*,/usr/hdp/current/hadoop-yarn-client/lib/*,
-        /usr/hdp/current/hadoop-mapreduce-client/*,/usr/hdp/current/hadoop-client/client/*
+        $HADOOP_YARN_HOME/share/hadoop/yarn/lib/*
     </value>
   </property>
   <property>
