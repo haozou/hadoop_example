@@ -16,23 +16,23 @@
 
 <property>
     <name>yarn.resourcemanager.resource-tracker.address</name>
-    <value>cdh5nn.alpinenow.local:8031</value>
+    <value>${node1}:8031</value>
   </property>
   <property>
     <name>yarn.resourcemanager.address</name>
-    <value>cdh5nn.alpinenow.local:8032</value>
+    <value>${node1}:8032</value>
   </property>
   <property>
     <name>yarn.resourcemanager.scheduler.address</name>
-    <value>cdh5nn.alpinenow.local:8030</value>
+    <value>${node1}:8030</value>
   </property>
   <property>
     <name>yarn.resourcemanager.admin.address</name>
-    <value>cdh5nn.alpinenow.local:8033</value>
+    <value>${node1}:8033</value>
   </property>
   <property>
     <name>yarn.resourcemanager.webapp.address</name>
-    <value>cdh5nn.alpinenow.local:8088</value>
+    <value>${node1}:8088</value>
   </property>
   <property>
     <description>Classpath for typical applications.</description>
@@ -56,7 +56,7 @@
         $HADOOP_CONF_DIR,/usr/hdp/current/hadoop-client/*,/usr/hdp/current/hadoop-client/lib/*,
         /usr/hdp/current/hadoop-hdfs-client/*,/usr/hdp/current/hadoop-hdfs-client/lib/*,
         /usr/hdp/current/hadoop-yarn-client/*,/usr/hdp/current/hadoop-yarn-client/lib/*,
-        /usr/hdp/current/hadoop-mapreduce-client/*,/usr/hdp/current/hadoop-client/client/*
+        /usr/hdp/current/hadoop-mapreduce-client/*,/usr/hdp/current/hadoop-client/client/*,
     </value>
   </property>
   <property>

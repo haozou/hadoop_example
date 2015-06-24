@@ -19,7 +19,7 @@
 <configuration>
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://cdh5nn.alpinenow.local:8020</value>
+        <value>hdfs://${node1}:8020</value>
     </property>
 
     <property>
@@ -27,13 +27,13 @@
         <value>/Users/Hao/workspace/hadoop_example/yarn_example/target/yarn_example-1.0.jar</value>
         <!--This is extremly important!!!, see WordCount.java
                   //  conf.set("mapred.jar", "/Users/zhaoyong/git/codeboyyong/hadoop-sample/wordcount_cli/target/wordcount_cli-1.0.jar");
-        you can do it by 
+        you can do it by
         -->
     </property>
 
     <property>
         <name>mapreduce.jobhistory.address</name>
-        <value>cdh5nn.alpinenow.local:10020</value>
+        <value>${node1}:10020</value>
     </property>
 </configuration>
 

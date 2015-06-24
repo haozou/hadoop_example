@@ -4,6 +4,7 @@ import com.alpine.hadoop.wordcount.WCIntSumReducer;
 import com.alpine.hadoop.wordcount.WCTokenizerMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -40,7 +41,10 @@ public class WordCount extends Configured implements Tool {
         job.setReducerClass(WCIntSumReducer.class);
 
         //the hdfs input and output directory to be fetched from the command line
-
+        FileSystem fs = FileSystem.get(conf);
+        if (fs.exists(new Path(args[1]))) {
+            fs.delete(new Path(args[1]), true);
+        }
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
