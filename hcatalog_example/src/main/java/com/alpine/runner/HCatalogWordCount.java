@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author hao
  */
-public class HCatalogColumnFilter extends Configured implements Tool {
+public class HCatalogWordCount extends Configured implements Tool {
 
     public static final List<Class> libjars = new ArrayList<Class>() {{
         add(HCatRecord.class); //hcatalog-core
@@ -52,9 +52,9 @@ public class HCatalogColumnFilter extends Configured implements Tool {
 
         UserGroupInformation ugi = UserGroupInformation
                 .createRemoteUser("mapred");
-        ugi.doAs(new PrivilegedExceptionAction<HCatalogColumnFilter>() {
-            public HCatalogColumnFilter run() throws Exception {
-                HCatalogColumnFilter mr = new HCatalogColumnFilter();
+        ugi.doAs(new PrivilegedExceptionAction<HCatalogWordCount>() {
+            public HCatalogWordCount run() throws Exception {
+                HCatalogWordCount mr = new HCatalogWordCount();
                 exitCode = ToolRunner.run(new Configuration(), mr, (String[]) ArrayUtils.addAll(hadoopArgs, args));
                 return mr;
             }
@@ -102,7 +102,7 @@ public class HCatalogColumnFilter extends Configured implements Tool {
 
         // Assume the default database
         String dbName = null;
-        Job job = Job.getInstance(conf, "HCatalogColumnFilter");
+        Job job = Job.getInstance(conf, "HCatalogWordCount");
 
         job.setJar("/Users/Hao/workspace/hadoop_example/hcatalog_example/target/hcatalog_example-1.0.jar");
 
@@ -126,7 +126,6 @@ public class HCatalogColumnFilter extends Configured implements Tool {
             fs.delete(new Path(outputTableName), true);
         }
         FileOutputFormat.setOutputPath(job, new Path(outputTableName));
-
         /*HCatOutputFormat.setOutput(job, OutputJobInfo.create(dbName, outputTableName, null));
         job.setOutputFormatClass(HCatOutputFormat.class);
         HCatSchema outputSchema = HCatOutputFormat.getTableSchema(job.getConfiguration());
