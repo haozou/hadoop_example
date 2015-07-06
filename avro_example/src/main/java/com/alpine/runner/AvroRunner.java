@@ -1,7 +1,9 @@
 package com.alpine.runner;
 
 import com.alpine.avro.AvroMapper;
+import com.alpine.utility.Utilities;
 import org.apache.avro.mapreduce.AvroKeyInputFormat;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -16,11 +18,30 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Hao on 6/4/15.
  */
 public class AvroRunner extends Configured implements Tool {
+    public static final List<Class> libjars = new ArrayList<Class>() {{
+        add(AvroKeyInputFormat.class); //avro-mapper
+    }};
+
+    public static void main(final String[] args) throws Exception {
+        final String[] hadoopArgs = {"-libjars", Utilities.libjars(libjars)};
+        UserGroupInformation ugi = UserGroupInformation
+                .createRemoteUser("mapred");
+        ugi.doAs(new PrivilegedExceptionAction<AvroRunner>() {
+            public AvroRunner run() throws Exception {
+                AvroRunner sample = new AvroRunner();
+                ToolRunner.run(new Configuration(), sample, (String[]) ArrayUtils.addAll(hadoopArgs, args));
+                return sample;
+            }
+        });
+    }
+
     public int run(String[] args) throws Exception {
 
         Configuration conf = getConf();
@@ -34,11 +55,7 @@ public class AvroRunner extends Configured implements Tool {
 
         job.setInputFormatClass(AvroKeyInputFormat.class);
         job.setMapperClass(AvroMapper.class);
-        //File file = new File("users.avro");
 
-        //DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
-        //DataFileReader<GenericRecord> dataFileReader = new DataFileReader<GenericRecord>(file, datumReader);
-        //AvroJob.setInputKeySchema(job, dataFileReader.getSchema());
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(IntWritable.class);
 
@@ -47,20 +64,7 @@ public class AvroRunner extends Configured implements Tool {
         if (fs.exists(new Path(args[1]))) {
             fs.delete(new Path(args[1]), true);
         }
-        //System.out.println(file.getAbsolutePath());
         job.waitForCompletion(true);
         return 0;
-    }
-
-    public static void main(final String[] args) throws Exception {
-        UserGroupInformation ugi = UserGroupInformation
-                .createRemoteUser("mapred");
-        ugi.doAs(new PrivilegedExceptionAction<AvroRunner>() {
-            public AvroRunner run() throws Exception {
-                AvroRunner sample = new AvroRunner();
-                ToolRunner.run(new Configuration(), sample, args);
-                return sample;
-            }
-        });
     }
 }

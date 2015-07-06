@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+
+
+    <!--property>
+      <name>mapreduce.cluster.local.dir</name>
+      <value>/cdh5/data_yarn</value>
+      <final>true</final>
+    </property-->
+
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>mapreduce.jobhistory.address</name>
+        <value>cdh5nn.alpinenow.local:10020</value>
+
+    </property>
+    <property>
+
+        <name>mapreduce.jobhistory.webapp.address</name>
+        <value>cdh5nn.alpinenow.local:19888</value>
+    </property>
+
+    <property>
+        <name>yarn.app.mapreduce.am.staging-dir</name>
+        <value>/user</value>
+    </property>
+
+    <!--<property>-->
+    <!--<name>mapreduce.map.output.compress</name>-->
+    <!--<value>true</value>-->
+    <!--</property>-->
+
+    <!--<property>-->
+    <!--<name>mapreduce.map.output.compress.codec</name>-->
+    <!--<value>org.apache.hadoop.io.compress.LzoCodec</value>-->
+    <!--</property>-->
+
+    <!--<property>-->
+    <!--<name>mapreduce.output.fileoutputformat.compress</name>-->
+    <!--<value>true</value>-->
+    <!--</property>-->
+
+    <!--<property>-->
+    <!--<name>mapreduce.output.fileoutputformat.compress.codec</name>-->
+    <!--<value>org.apache.hadoop.io.compress.LzoCodec</value>-->
+    <!--</property>-->
+
+</configuration>
+

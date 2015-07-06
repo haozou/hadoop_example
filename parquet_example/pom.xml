@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.alpine</groupId>
+        <artifactId>hadoop_example</artifactId>
+        <version>1.0</version>
+    </parent>
+    <groupId>com.alpine.parquet</groupId>
+    <artifactId>parquet_example</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <parquet.version>1.5.0-cdh5.4.1</parquet.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-common</artifactId>
+            <version>${parquet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-column</artifactId>
+            <version>${parquet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-encoding</artifactId>
+            <version>${parquet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-format</artifactId>
+            <version>2.1.0-cdh5.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-hadoop</artifactId>
+            <version>${parquet.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -2,75 +2,78 @@ package com.alpine.runner;
 
 import com.alpine.hadoop.hcatalog.HCatMapper;
 import com.alpine.hadoop.hcatalog.HCatReducer;
+import com.alpine.utility.Utilities;
+import com.facebook.fb303.FacebookBase;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.metastore.HiveMetaStore;
+import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.security.UserGroupInformation;
-import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.hive.hcatalog.api.HCatClient;
 import org.apache.hive.hcatalog.api.HCatCreateTableDesc;
-import org.apache.hive.hcatalog.data.DefaultHCatRecord;
+import org.apache.hive.hcatalog.data.HCatRecord;
 import org.apache.hive.hcatalog.data.schema.HCatFieldSchema;
-import org.apache.hive.hcatalog.data.schema.HCatSchema;
 import org.apache.hive.hcatalog.mapreduce.HCatInputFormat;
-import org.apache.hive.hcatalog.mapreduce.HCatOutputFormat;
-import org.apache.hive.hcatalog.mapreduce.OutputJobInfo;
-import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
-import org.apache.hive.hcatalog.cli.HCatCli;
+import org.apache.thrift.meta_data.EnumMetaData;
 
-import java.io.FileInputStream;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author hao
  */
 public class HCatalogColumnFilter extends Configured implements Tool {
 
+    public static final List<Class> libjars = new ArrayList<Class>() {{
+        add(HCatRecord.class); //hcatalog-core
+        //add(HCatClient.class); //hcatalog-webclient
+        //add(HiveEndPoint.class);
+        //add(HCatEventMessage.class);
+        add(HiveMetaStore.class);
+        add(EnumMetaData.class);
+        //add(AbstractMapJoinOperator.class);
+        add(FacebookBase.class);
+    }};
     public static int exitCode = 0;
 
     public static void main(final String[] args) throws Exception {
 
+        final String[] hadoopArgs = {"-libjars", Utilities.libjars(libjars)};
 
         UserGroupInformation ugi = UserGroupInformation
-                .createRemoteUser("hdfs");
+                .createRemoteUser("mapred");
         ugi.doAs(new PrivilegedExceptionAction<HCatalogColumnFilter>() {
             public HCatalogColumnFilter run() throws Exception {
                 HCatalogColumnFilter mr = new HCatalogColumnFilter();
-                exitCode = ToolRunner.run(new Configuration(), mr, args);
+                exitCode = ToolRunner.run(new Configuration(), mr, (String[]) ArrayUtils.addAll(hadoopArgs, args));
                 return mr;
             }
         });
-//		int exitCode = ToolRunner.run(conf, new HCatalogColumnFilter(), args);
-		System.exit(exitCode);
+        System.exit(exitCode);
     }
 
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
-        conf.set("fs.default.name", "hdfs://awshdp2regression.alpinenow.local:8020");
 
-        conf.set("mapreduce.framework.name", "yarn");
-        conf.set("yarn.application.classpath", "/etc/hadoop/conf,/usr/lib/hadoop/*,/usr/lib/hadoop/lib/*,/usr/lib/hadoop-hdfs/*,/usr/lib/hadoop-hdfs/lib/*,/usr/lib/hadoop-yarn/*,/usr/lib/hadoop-yarn/lib/*,/usr/lib/hadoop-mapreduce/*,/usr/lib/hadoop-mapreduce/lib/*");
-        conf.set("yarn.resourcemanager.address", "awshdp2regression.alpinenow.local:8050");
-        conf.set("yarn.resourcemanager.scheduler.address", "awshdp2regression.alpinenow.local:8030");
         // have to do these two set to overwrite the default hive-site.xml
-        //conf.set("hive.metastore.client.connect.retry.delay", "1");
-        //conf.set("hive.metastore.client.socket.timeout", "600");
-        conf.set("hive.metastore.uris", "thrift://awshdp2regression.alpinenow.local:9083");
+        conf.set("hive.metastore.client.connect.retry.delay", "1");
+        conf.set("hive.metastore.client.socket.timeout", "600");
+        conf.set("hive.metastore.uris", "thrift://cdh5cm.alpinenow.local:9083");
 
-        //conf.set("javax.jdo.option.ConnectionURL", "jdbc:mysql://awshdp2regression.alpinenow.local/hivemetastoredb?createDatabaseIfNotExist=true");
-
-        //conf.set("javax.jdo.option.ConnectionDriverName", "org.mysql.jdbc.Driver");
-        //conf.set("javax.jdo.option.ConnectionUserName", "hive");
-        //conf.set("javax.jdo.option.ConnectionPassword", "hive");
-        args = new GenericOptionsParser(conf, args).getRemainingArgs();
+        /*conf.set("javax.jdo.option.ConnectionURL", "jdbc:mysql://awshdp2regression.alpinenow.local/hivemetastoredb?createDatabaseIfNotExist=true");
+        conf.set("javax.jdo.option.ConnectionDriverName", "org.mysql.jdbc.Driver");
+        conf.set("javax.jdo.option.ConnectionUserName", "hive");
+        conf.set("javax.jdo.option.ConnectionPassword", "hive");*/
 
         // Get the input and output table names as arguments
         String inputTableName = args[0];
@@ -91,7 +94,7 @@ public class HCatalogColumnFilter extends Configured implements Tool {
             client.createTable(tableDesc);
         }
 
-        for (String name: client.listTableNamesByPattern("default", "*")) {
+        for (String name : client.listTableNamesByPattern("default", "*")) {
             System.err.println(name);
         }
         /*HCatClient example code end*/
@@ -100,38 +103,36 @@ public class HCatalogColumnFilter extends Configured implements Tool {
         // Assume the default database
         String dbName = null;
         Job job = Job.getInstance(conf, "HCatalogColumnFilter");
-        /*Set the input table*/
-        HCatInputFormat.setInput(job, dbName, inputTableName);
-        //job.setJarByClass(HCatalogColumnFilter.class);
+
         job.setJar("/Users/Hao/workspace/hadoop_example/hcatalog_example/target/hcatalog_example-1.0.jar");
 
-        HCatSchema inputSchema = HCatInputFormat.getTableSchema(job.getConfiguration());
-        System.err.println("INFO: input schema is :" + inputSchema);
-        System.err.println("INFO: input field is:" + inputSchema.getFieldNames());
-        job.setInputFormatClass(HCatInputFormat.class);
         job.setMapperClass(HCatMapper.class);
         job.setReducerClass(HCatReducer.class);
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(WritableComparable.class);
-        job.setOutputValueClass(DefaultHCatRecord.class);
-        //FileOutputFormat.setOutputPath(job, new Path(outputTableName));
-		/*Set the output table*/
-        FileInputFormat.addInputPath(job, new Path("Input"));
-        HCatOutputFormat.setOutput(job,
-                OutputJobInfo.create(dbName, outputTableName, null));
-        /**
-         * will auto connect to HCatalog to get the table column information as
-         * the output schema information this will work because the output table
-         * is alreasy exists!!!
-         */
+        job.setOutputValueClass(IntWritable.class);
 
-        HCatSchema outputSchema = HCatOutputFormat.getTableSchema(job
-                .getConfiguration());
-        System.err.println("INFO: output schema explicitly set for writing:"
-                + outputSchema);
-        HCatOutputFormat.setSchema(job, outputSchema);
+        /*Set the input table*/
+        HCatInputFormat.setInput(job.getConfiguration(), dbName, inputTableName);
+        job.setInputFormatClass(HCatInputFormat.class);
+        /*HCatSchema inputSchema = HCatInputFormat.getTableSchema(job.getConfiguration());
+        System.err.println("INFO: input schema is :" + inputSchema);
+        System.err.println("INFO: input field is:" + inputSchema.getFieldNames());*/
+
+		/*Set the output table*/
+        FileSystem fs = FileSystem.get(conf);
+        if (fs.exists(new Path(outputTableName))) {
+            fs.delete(new Path(outputTableName), true);
+        }
+        FileOutputFormat.setOutputPath(job, new Path(outputTableName));
+
+        /*HCatOutputFormat.setOutput(job, OutputJobInfo.create(dbName, outputTableName, null));
         job.setOutputFormatClass(HCatOutputFormat.class);
+        HCatSchema outputSchema = HCatOutputFormat.getTableSchema(job.getConfiguration());
+        System.err.println("INFO: output schema explicitly set for writing:" + outputSchema);
+        HCatOutputFormat.setSchema(job, outputSchema);*/
+
         return (job.waitForCompletion(true) ? 0 : 1);
     }
 }

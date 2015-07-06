@@ -20,6 +20,18 @@ import java.security.PrivilegedExceptionAction;
 
 
 public class WordCount extends Configured implements Tool {
+    public static void main(final String[] args) throws Exception {
+        UserGroupInformation ugi = UserGroupInformation
+                .createRemoteUser("mapred");
+        ugi.doAs(new PrivilegedExceptionAction<WordCount>() {
+            public WordCount run() throws Exception {
+                WordCount mr = new WordCount();
+                int res = ToolRunner.run(new Configuration(), mr, args);
+                return mr;
+            }
+        });
+    }
+
     public int run(String[] args) throws Exception {
         //creating a JobConf object and assigning a job name for identification purposes
         JobConf conf = new JobConf(getConf(), WordCount.class);
@@ -33,8 +45,7 @@ public class WordCount extends Configured implements Tool {
         //mapred.jar -> see core-site.xml
         //  conf.set("mapred.jar", "/Users/zhaoyong/git/codeboyyong/hadoop-sample/wordcount_cli/target/wordcount_cli-1.0.jar");
 
-        Job job = new Job(conf);
-        //job.setJarByClass(WordCount.class);
+        Job job = Job.getInstance(conf);
 
         //Providing the mapper and reducer class names
         job.setMapperClass(WCTokenizerMapper.class);
@@ -50,17 +61,5 @@ public class WordCount extends Configured implements Tool {
 
         job.waitForCompletion(true);
         return 0;
-    }
-
-    public static void main(final String[] args) throws Exception {
-        UserGroupInformation ugi = UserGroupInformation
-                .createRemoteUser("mapred");
-        ugi.doAs(new PrivilegedExceptionAction<WordCount>() {
-            public WordCount run() throws Exception {
-                WordCount mr = new WordCount();
-                int res = ToolRunner.run(new Configuration(), mr, args);
-                return mr;
-            }
-        });
     }
 }

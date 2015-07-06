@@ -10,7 +10,7 @@ import java.io.IOException;
 public class HCatMapper extends
         Mapper<WritableComparable, HCatRecord, IntWritable, IntWritable> {
 
-    public int age;
+    public int temperature;
 
     @Override
     protected void map(
@@ -21,7 +21,7 @@ public class HCatMapper extends
             throws IOException, InterruptedException {
         int numOfCols = value.size();
         System.out.println(numOfCols);
-        age = (Integer) value.get(1);
-        context.write(new IntWritable(age), new IntWritable(1));
+        temperature = (Integer) value.get(2);
+        context.write(new IntWritable(temperature), new IntWritable(1));
     }
 }

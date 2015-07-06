@@ -7,10 +7,12 @@
     <version>1.0</version>
     <name>BIG DATA MAIN</name>
     <modules>
+        <module>utility</module>
         <module>yarn_example</module>
         <module>hcatalog_example</module>
         <module>embeded_pig_example</module>
         <module>avro_example</module>
+        <module>parquet_example</module>
     </modules>
 
     <properties>
