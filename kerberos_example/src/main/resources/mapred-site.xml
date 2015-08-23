@@ -5,25 +5,20 @@
 
 <configuration>
 
-
-    <!--property>
-      <name>mapreduce.cluster.local.dir</name>
-      <value>/cdh5/data_yarn</value>
-      <final>true</final>
-    </property-->
     <property>
         <name>mapreduce.framework.name</name>
         <value>yarn</value>
     </property>
+
     <property>
         <name>mapreduce.jobhistory.address</name>
-        <value>${node1}:10020</value>
+        <value>cdh5hakerberosnn.alpinenow.local:10020</value>
 
     </property>
-    <property>
 
+    <property>
         <name>mapreduce.jobhistory.webapp.address</name>
-        <value>${node1}:19888</value>
+        <value>cdh5hakerberosnn.alpinenow.local:19888</value>
     </property>
 
     <property>

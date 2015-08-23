@@ -9,9 +9,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.HiveMetaStore;
+import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -66,9 +69,12 @@ public class HCatalogWordCount extends Configured implements Tool {
         Configuration conf = getConf();
 
         // have to do these two set to overwrite the default hive-site.xml
+        HiveConf hiveConf = new HiveConf();
+        conf.set("fs.defaultFS", "hdfs://10.10.2.36:8020");
+
         conf.set("hive.metastore.client.connect.retry.delay", "1");
         conf.set("hive.metastore.client.socket.timeout", "600");
-        conf.set("hive.metastore.uris", "thrift://cdh5cm.alpinenow.local:9083");
+        conf.set("hive.metastore.uris", "thrift://10.10.2.36:9083");
 
         /*conf.set("javax.jdo.option.ConnectionURL", "jdbc:mysql://awshdp2regression.alpinenow.local/hivemetastoredb?createDatabaseIfNotExist=true");
         conf.set("javax.jdo.option.ConnectionDriverName", "org.mysql.jdbc.Driver");
@@ -78,6 +84,7 @@ public class HCatalogWordCount extends Configured implements Tool {
         // Get the input and output table names as arguments
         String inputTableName = args[0];
         String outputTableName = args[1];
+
 
         /*HCatClient example code start*/
         HCatClient client = HCatClient.create(conf);
@@ -92,6 +99,7 @@ public class HCatalogWordCount extends Configured implements Tool {
         if (client.listTableNamesByPattern(null, args[1]).isEmpty()) {
             System.err.println(args[1] + " is not exists, create it");
             client.createTable(tableDesc);
+
         }
 
         for (String name : client.listTableNamesByPattern("default", "*")) {
@@ -108,11 +116,12 @@ public class HCatalogWordCount extends Configured implements Tool {
 
         job.setMapperClass(HCatMapper.class);
         job.setReducerClass(HCatReducer.class);
-        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(WritableComparable.class);
         job.setOutputValueClass(IntWritable.class);
-
+        hiveConf.set("fs.defaultFS", "hdfs://10.10.2.36:8020");
+        Hive.get(hiveConf);
         /*Set the input table*/
         HCatInputFormat.setInput(job.getConfiguration(), dbName, inputTableName);
         job.setInputFormatClass(HCatInputFormat.class);

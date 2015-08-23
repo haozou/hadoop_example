@@ -1,6 +1,7 @@
 package com.alpine.hadoop.hcatalog;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.Reducer;
 
@@ -10,15 +11,15 @@ import java.util.Iterator;
 /**
  * Created by Hao on 5/19/15.
  */
-public class HCatReducer extends Reducer<IntWritable, IntWritable,
+public class HCatReducer extends Reducer<Text, IntWritable,
         WritableComparable, IntWritable> {
 
 
     @Override
     protected void reduce(
-            IntWritable key,
+            Text key,
             java.lang.Iterable<IntWritable> values,
-            org.apache.hadoop.mapreduce.Reducer<IntWritable, IntWritable,
+            org.apache.hadoop.mapreduce.Reducer<Text, IntWritable,
                     WritableComparable, IntWritable>.Context context)
             throws IOException, InterruptedException {
         int sum = 0;
@@ -31,6 +32,6 @@ public class HCatReducer extends Reducer<IntWritable, IntWritable,
         record.set(0, key.get());
         record.set(1, sum);
         context.write(null, record);*/
-        context.write(new IntWritable(key.get()), new IntWritable(sum));
+        context.write(new Text(key.toString()), new IntWritable(sum));
     }
 }

@@ -13,6 +13,7 @@
         <module>embeded_pig_example</module>
         <module>avro_example</module>
         <module>parquet_example</module>
+        <module>kerberos</module>
     </modules>
 
     <properties>

@@ -32,25 +32,5 @@
         <value>/user</value>
     </property>
 
-    <property>
-        <name>mapreduce.map.output.compress</name>
-        <value>true</value>
-    </property>
-
-    <property>
-        <name>mapreduce.map.output.compress.codec</name>
-        <value>org.apache.hadoop.io.compress.LzoCodec</value>
-    </property>
-
-    <property>
-        <name>mapreduce.output.fileoutputformat.compress</name>
-        <value>true</value>
-    </property>
-
-    <property>
-        <name>mapreduce.output.fileoutputformat.compress.codec</name>
-        <value>org.apache.hadoop.io.compress.LzoCodec</value>
-    </property>
-
 </configuration>
 

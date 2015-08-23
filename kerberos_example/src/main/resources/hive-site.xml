@@ -15,22 +15,25 @@
 -->
 
 <!-- Put site-specific property overrides in this file. -->
-
 <configuration>
     <property>
-        <name>fs.default.name</name>
-        <value>hdfs://10.10.2.36:8020</value>
+        <name>hive.metastore.client.connect.retry.delay</name>
+        <value>1</value>
     </property>
 
-    <!--<property>-->
-    <!--<name>mapred.jar</name>-->
-    <!--<value>/Users/Hao/workspace/hadoop_example/yarn_example/target/yarn_example-1.0.jar</value>-->
-    <!--</property>-->
+    <property>
+        <name>hive.metastore.client.socket.timeout</name>
+        <value>600</value>
+    </property>
 
-    <!--<property>-->
-    <!--<name>mapreduce.jobhistory.address</name>-->
-    <!--<value>${node1}:10020</value>-->
-    <!--</property>-->
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://cdh5hakerberosnn.alpinenow.local:9083</value>
+    </property>
 
+    <property>
+        <name>hive.metastore.kerberos.principal</name>
+        <value>hive/_HOST@ALPINE</value>
+    </property>
 </configuration>
 
