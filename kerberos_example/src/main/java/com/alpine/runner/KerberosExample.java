@@ -24,25 +24,23 @@ import java.util.List;
  * Created by Hao on 8/19/15.
  */
 public class KerberosExample extends Configured implements Tool {
-    private static final String HIVE_METASTORE_URIS = "hive.metastore.uris";
     private static final String HIVE_METASTORE_SASL_ENABLED = "hive.metastore.sasl.enabled";
     private static final String HIVE_METASTORE_KERBEROS_PRINCIPAL = "hive.metastore.kerberos.principal";
-    private static final String HIVE_METASTORE_LOCAL = "hive.metastore.local";
     private static final String HADOOP_RPC_PROTECTION = "hadoop.rpc.protection";
 
     public static void main(final String[] args) throws Exception {
         final Configuration conf = new Configuration();
         UserGroupInformation.setConfiguration(conf);
-        if (args.length < 3) {
-            System.err.println("no principle, keytab or proxyuser provided");
-            System.exit(1);
-        }
-        String principle = args[0];
-        String keytab = args[1];
-        String proxyUser = args[2];
-        System.out.println("principle: " + principle + ", keytab: " + keytab + ", proxyUser: " + proxyUser);
+
+        String principle = System.getProperty("principle");
+        String keytab = System.getProperty("keytab");
+        String user = System.getProperty("user");
+        System.out.println("principle: " + principle + ", keytab: " + keytab + ", user: " + user);
         UserGroupInformation.loginUserFromKeytab(principle, keytab);
-        UserGroupInformation ugi = UserGroupInformation.createProxyUser(proxyUser, UserGroupInformation.getLoginUser());
+        // proxy user here is not working
+        UserGroupInformation ugi = UserGroupInformation.createProxyUser(user, UserGroupInformation.getLoginUser());
+
+        // if uncomment this line to use the login user, it works
         //ugi = UserGroupInformation.getLoginUser();
         ugi.doAs(new PrivilegedExceptionAction<KerberosExample>() {
             public KerberosExample run() throws Exception {
@@ -57,12 +55,6 @@ public class KerberosExample extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
-        org.apache.hadoop.fs.FileSystem fs = org.apache.hadoop.fs.FileSystem.get(conf);
-        System.out.println("hdfs root directory:");
-        for (FileStatus fileStatus : fs.listStatus(new Path("/"))) {
-            System.err.println(fileStatus.getPath().getName());
-        }
-
         /*hcatalog example*/
         HiveConf hiveConf = null;
         HCatClient hiveclient = null;
