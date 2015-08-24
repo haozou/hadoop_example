@@ -8,6 +8,7 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.metastore.HiveMetaStore;
+import org.apache.hadoop.hive.shims.Hadoop23Shims;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -39,9 +40,9 @@ public class KerberosExample extends Configured implements Tool {
         final Configuration conf = new Configuration();
         conf.set("hive.metastore.sasl.enabled", "true");
         conf.set("hive.server2.enable.impersonation", "true");
-        UserGroupInformation.setConfiguration(conf);
+
         UserGroupInformation ugi = UserGroupInformation.loginUserFromKeytabAndReturnUGI("chorus/chorus.alpinenow.local@ALPINE", "/Users/Hao/workspace/hadoop_example/kerberos_example/chorus.keytab");
-        //ugi = UserGroupInformation.createProxyUser("hao", UserGroupInformation.getLoginUser());
+        //ugi = UserGroupInformation.createProxyUser("hive", ugi);
         ugi.doAs(new PrivilegedExceptionAction<KerberosExample>() {
             public KerberosExample run() throws Exception {
                 KerberosExample mr = new KerberosExample();

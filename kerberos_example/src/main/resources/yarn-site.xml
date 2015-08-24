@@ -87,8 +87,4 @@
         <name>yarn.resourcemanager.admin.address</name>
         <value>cdh5hakerberosnn.alpinenow.local:8033</value>
     </property>
-    <property>
-        <name>web.principal</name>
-        <value>HTTP</value>
-    </property>
 </configuration>
