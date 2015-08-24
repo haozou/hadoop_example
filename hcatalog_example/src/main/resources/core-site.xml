@@ -19,7 +19,7 @@
 <configuration>
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://10.10.2.36:8020</value>
+        <value>hdfs://{node1}:8020</value>
     </property>
 
     <!--<property>-->
