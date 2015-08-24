@@ -1,0 +1,80 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.alpine</groupId>
+        <artifactId>hadoop_example</artifactId>
+        <version>1.0</version>
+    </parent>
+    <groupId>com.alpine.avro</groupId>
+    <artifactId>avro_example</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0</version>
+    <name>avro_example</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.7.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alpine</groupId>
+            <artifactId>alpine-pig_2.10</artifactId>
+            <version>0.12.0-cdh5.1.2-withouthadoop</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-mapred</artifactId>
+            <version>1.7.7</version>
+            <classifier>hadoop2</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.alpine.utility</groupId>
+            <artifactId>utility</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-core</artifactId>-->
+        <!--<version>2.4.1-mapr-1408</version>-->
+        <!--</dependency>-->
+    </dependencies>
+    <build>
+        <plugins>
+            <!--<plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>1.7.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+            <!-- for some reason, there will be a jdk version 1.3 error when compiling,
+                so have to do this -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <fork>true</fork>
+                    <meminitial>1024m</meminitial>
+                    <maxmem>2044m</maxmem>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>
