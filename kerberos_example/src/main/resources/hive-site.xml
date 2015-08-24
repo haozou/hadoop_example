@@ -28,12 +28,8 @@
 
     <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://cdh5hakerberosnn.alpinenow.local:9083</value>
+        <value>thrift://${metastore}:9083</value>
     </property>
 
-    <property>
-        <name>hive.metastore.kerberos.principal</name>
-        <value>hive/_HOST@ALPINE</value>
-    </property>
 </configuration>
 

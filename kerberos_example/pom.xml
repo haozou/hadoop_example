@@ -61,11 +61,6 @@
             <artifactId>libthrift</artifactId>
             <version>0.9.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.alpine.utility</groupId>
-            <artifactId>utility</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
