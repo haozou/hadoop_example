@@ -15,7 +15,7 @@
     <name>kerberos_example</name>
 
     <properties>
-        <hcatalog.version>0.13.1-cdh5.3.6</hcatalog.version>
+        <hcatalog.version>1.2.1</hcatalog.version>
     </properties>
 
     <dependencies>
@@ -52,6 +52,12 @@
             <version>${hcatalog.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-shims</artifactId>
+            <version>${hcatalog.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libfb303</artifactId>
             <version>0.9.0</version>
@@ -60,6 +66,11 @@
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
             <version>0.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alpine.utility</groupId>
+            <artifactId>utility</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

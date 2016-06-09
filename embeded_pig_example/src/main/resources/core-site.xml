@@ -19,12 +19,7 @@
 <configuration>
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://cdh5nn.alpinenow.local:8020</value>
+        <value>hdfs://hdp22a.alpinenow.local:8020</value>
     </property>
-
-    <!--<property>-->
-        <!--<name>mapred.jar</name>-->
-        <!--<value>/Users/Hao/workspace/hadoop_example/avro_example/target/avro_example-1.0.jar</value>-->
-    <!--</property>-->
 </configuration>
 

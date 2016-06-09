@@ -13,13 +13,13 @@
         <module>embeded_pig_example</module>
         <module>avro_example</module>
         <module>parquet_example</module>
-        <module>kerberos</module>
+        <module>kerberos_example</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.7</java.version>
-        <hadoop.version>2.6.0</hadoop.version>
+        <hadoop.version>2.6.0.2.2.0.0-2041</hadoop.version>
     </properties>
     <repositories>
         <repository>
@@ -76,9 +76,19 @@
             <version>${hadoop.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-yarn-common</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
+            <version>${hadoop.version}</version>
         </dependency>
     </dependencies>
     <build>

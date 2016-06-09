@@ -19,7 +19,7 @@
 <configuration>
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://${namenode}:8020</value>
+        <value>hdfs://cdh5hakerberosdn.alpinenow.local:8020</value>
     </property>
     <property>
         <name>hadoop.security.authentication</name>

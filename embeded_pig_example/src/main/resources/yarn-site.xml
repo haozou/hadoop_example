@@ -14,25 +14,17 @@
 -->
 <configuration>
 
-<property>
-    <name>yarn.resourcemanager.resource-tracker.address</name>
-    <value>cdh5nn.alpinenow.local:8031</value>
-  </property>
   <property>
     <name>yarn.resourcemanager.address</name>
-    <value>cdh5nn.alpinenow.local:8032</value>
+    <value>hdp22b.alpinenow.local:8050</value>
   </property>
   <property>
     <name>yarn.resourcemanager.scheduler.address</name>
-    <value>cdh5nn.alpinenow.local:8030</value>
-  </property>
-  <property>
-    <name>yarn.resourcemanager.admin.address</name>
-    <value>cdh5nn.alpinenow.local:8033</value>
+    <value>hdp22b.alpinenow.local:8030</value>
   </property>
   <property>
     <name>yarn.resourcemanager.webapp.address</name>
-    <value>cdh5nn.alpinenow.local:8088</value>
+    <value>hdp22b.alpinenow.local:8088</value>
   </property>
   <property>
     <description>Classpath for typical applications.</description>
@@ -46,15 +38,27 @@
         $HADOOP_HOME/lib/hadoop-mapreduce/*,$HADOOP_COMMON_HOME/share/hadoop/common/*,
         $HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,
         $HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,
-        $HADOOP_YARN_HOME/share/hadoop/yarn/lib/*
+        $HADOOP_YARN_HOME/share/hadoop/yarn/lib/*,
+        $HADOOP_CONF_DIR,/usr/hdp/current/hadoop-client/*,
+        /usr/hdp/current/hadoop-client/lib/*,
+        /usr/hdp/current/hadoop-hdfs-client/*,
+        /usr/hdp/current/hadoop-hdfs-client/lib/*,
+        /usr/hdp/current/hadoop-yarn-client/*,
+        /usr/hdp/current/hadoop-yarn-client/lib/*,
+        /usr/hdp/2.2.0.0-2041/hadoop/*,
+        /usr/hdp/2.2.0.0-2041/hadoop-yarn/*,
+        /usr/hdp/2.2.0.0-2041/hadoop-mapreduce/*,
+        /usr/hdp/2.2.0.0-2041/hadoop-hdfs/*
     </value>
   </property>
-  <property>
-    <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
-    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
-  </property>
+
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>$PWD/mr-framework/hadoop/share/hadoop/mapreduce/*:$PWD/mr-framework/hadoop/share/hadoop/mapreduce/lib/*:$PWD/mr-framework/hadoop/share/hadoop/common/*:$PWD/mr-framework/hadoop/share/hadoop/common/lib/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/lib/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/lib/*:/usr/hdp/2.2.0.0-2041/hadoop/lib/hadoop-lzo-0.6.0.2.2.0.0-2041.jar:/etc/hadoop/conf/secure</value>
+    </property>
+
+    <property>
+        <name>mapreduce.application.framework.path</name>
+        <value>/hdp/apps/2.2.0.0-2041/mapreduce/mapreduce.tar.gz#mr-framework</value>
+    </property>
 </configuration>

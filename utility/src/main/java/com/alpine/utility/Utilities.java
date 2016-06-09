@@ -12,7 +12,7 @@ final public class Utilities {
     public static String findJarAbsPath(Class clazz) throws URISyntaxException {
         File f = new File(clazz.getProtectionDomain()
                 .getCodeSource().getLocation().toURI());
-        return f.getAbsolutePath();
+        return "file://" + f.getAbsolutePath();
     }
 
     public static List<String> findJarAbsPaths(List<Class> classes) throws URISyntaxException {

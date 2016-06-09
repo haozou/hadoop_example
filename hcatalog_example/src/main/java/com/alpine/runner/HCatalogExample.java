@@ -1,26 +1,50 @@
 package com.alpine.runner;
 
+import com.alpine.hadoop.hcatalog.GsonInterfaceAdapter;
 import com.alpine.utility.Utilities;
 import com.facebook.fb303.FacebookBase;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
+import com.google.gson.internal.bind.CollectionTypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.HiveMetaStore;
+import org.apache.hadoop.hive.metastore.IMetaStoreClient;
+import org.apache.hadoop.hive.metastore.api.PartitionEventType;
 import org.apache.hadoop.hive.ql.metadata.Hive;
+import org.apache.hadoop.hive.ql.metadata.Table;
+import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hive.hcatalog.api.*;
+import org.apache.hive.hcatalog.cli.HCatCli;
+import org.apache.hive.hcatalog.common.HCatException;
+import org.apache.hive.hcatalog.data.DefaultHCatRecord;
 import org.apache.hive.hcatalog.data.HCatRecord;
-import org.apache.hive.hcatalog.data.transfer.DataTransferFactory;
-import org.apache.hive.hcatalog.data.transfer.HCatReader;
-import org.apache.hive.hcatalog.data.transfer.ReadEntity;
-import org.apache.hive.hcatalog.data.transfer.ReaderContext;
+import org.apache.hive.hcatalog.data.schema.HCatFieldSchema;
+import org.apache.hive.hcatalog.data.transfer.*;
 import org.apache.thrift.meta_data.EnumMetaData;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.security.PrivilegedExceptionAction;
 import java.util.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Hao on 7/9/15.
@@ -41,7 +65,7 @@ public class HCatalogExample extends Configured implements Tool {
         final String[] hadoopArgs = {"-libjars", Utilities.libjars(libjars)};
 
         UserGroupInformation ugi = UserGroupInformation
-                .createRemoteUser("mapred");
+                .createRemoteUser("yarn");
         ugi.doAs(new PrivilegedExceptionAction<HCatalogExample>() {
             public HCatalogExample run() throws Exception {
                 HCatalogExample mr = new HCatalogExample();
@@ -53,70 +77,62 @@ public class HCatalogExample extends Configured implements Tool {
     }
 
     public int run(String[] args) throws Exception {
-        String[] names = args[0].split("\\.");
-        ReadEntity.Builder builder = new ReadEntity.Builder();
-        ReadEntity entity = builder.withDatabase(names[0]).withTable(names[1]).build();
+//        String[] names = args[0].split("\\.");
+//
+//        ReadEntity.Builder builder = new ReadEntity.Builder();
+//        ReadEntity entity = builder.withDatabase(names[0]).withTable(names[1]).build();
         Configuration conf = new Configuration();
-        //conf.addResource(new Path("/Users/Hao/workspace/hadoop_example/hcatalog_example/src/main/java/com/alpine/hadoop/hcatalog/core-site.xml"));
-        conf.reloadConfiguration();
-        conf.set("fs.defaultFS", "hdfs://10.10.2.36:8020");
         conf.set("hive.metastore.client.connect.retry.delay", "1");
         conf.set("hive.metastore.client.socket.timeout", "600");
-        conf.set("hive.metastore.uris", "thrift://cdh5-automation1.alpinenow.local:9083");
-        URL uri = this.getClass().getClassLoader().getSystemResource("core-site.xml");
-//        HCatClient client = HCatClient.create(conf);
-//        try {
-//            HCatTable table = client.getTable("default", "hao_view");
-//            System.out.println(table.getLocation());
-//        } catch (HCatException e) {
-//            System.out.println(e.getCause().getMessage());
-//            if (e.getCause().getMessage().contains("There is no database named hao_view")) {
-//                System.out.println("nimabi");
+
+        HCatClient client = HCatClient.create(conf);
+        client.dropTable("public", "hao_test", true);
+        for (String table : client.listTableNamesByPattern("public", "*")) {
+            System.out.println(table);
+        }
+
+
+//        Map<String, String> config = new HashMap<String, String>();
+//        Iterator<Map.Entry<String, String>> iter = conf.iterator();
+//        while (iter.hasNext()) {
+//            Map.Entry<String, String> entry = iter.next();
+//            config.put(entry.getKey(), entry.getValue());
+//        }
+//
+//        HCatReader reader = DataTransferFactory.getHCatReader(entity, config);
+//        ReaderContext cntxt = reader.prepareRead();
+//        List<Iterator<HCatRecord>> iters = new ArrayList<Iterator<HCatRecord>>();
+//        for (int split = 0; split < cntxt.numSplits(); split++) {
+//            HCatReader read = DataTransferFactory.getHCatReader(cntxt, split);
+//            Iterator<HCatRecord> itr = read.read();
+//            iters.add(itr);
+//            while (itr.hasNext()) {
+//                HCatRecord value = itr.next();
+//                int numOfCols = value.size();
+//                for (int i = 0; i < numOfCols; i++) {
+//                    System.out.print(value.get(i) + " ");
+//                }
+//                System.out.println();
 //            }
 //        }
 
-        Map<String, String> config = new HashMap<String, String>();
-        Iterator<Map.Entry<String, String>> iter = conf.iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, String> entry = iter.next();
-            config.put(entry.getKey(), entry.getValue());
-        }
-
-        HiveConf hiveConf = new HiveConf();
-        hiveConf.set("fs.defaultFS", "hdfs://10.10.2.36:8020");
-        Hive.get(hiveConf);
-        HCatReader reader = DataTransferFactory.getHCatReader(entity, config);
-        ReaderContext cntxt = reader.prepareRead();
-
-        for (int split = 0; split < cntxt.numSplits(); split++) {
-            HCatReader read = DataTransferFactory.getHCatReader(cntxt, split);
-            Iterator<HCatRecord> itr = read.read();
-            while (itr.hasNext()) {
-                HCatRecord value = itr.next();
-                int numOfCols = value.size();
-                for (int i = 0; i < numOfCols; i++) {
-                    System.out.print(value.get(i) + " ");
-                }
-                System.out.println();
-            }
-        }
-        return 1;
         /*HCatClient example code start*/
-        /*PrimitiveTypeInfo typeInfo = new PrimitiveTypeInfo();
+//        PrimitiveTypeInfo typeInfo = new PrimitiveTypeInfo();
+//
+//        ArrayList<HCatFieldSchema> cols = new ArrayList<HCatFieldSchema>();
+//        typeInfo.setTypeName("double");
+//        int rows = 5;
+//        for (int i = 0; i < rows; i++) {
+//            cols.add(new HCatFieldSchema("col_" + Integer.toString(i), typeInfo, "id columns " + Integer.toString(i)));
+//        }
+//        HCatCreateDBDesc dbDesc = HCatCreateDBDesc.create("default").ifNotExists(true).build();
+//        client.createDatabase(dbDesc);
+//
+//        client.dropTable(null, "largedata", true);
+//        HCatCreateTableDesc tableDesc = HCatCreateTableDesc.create(null, "largedata", cols).ifNotExists(true).build();
+//        client.createTable(tableDesc);
 
-        ArrayList<HCatFieldSchema> cols = new ArrayList<HCatFieldSchema>();
-        typeInfo.setTypeName("double");
-        int rows = 460;
-        for (int i = 0; i < rows; i++) {
-            cols.add(new HCatFieldSchema("col_" + Integer.toString(i), typeInfo, "id columns " + Integer.toString(i)));
-        }
-        HCatCreateDBDesc dbDesc = HCatCreateDBDesc.create("default").ifNotExists(true).build();
-        client.createDatabase(dbDesc);
-
-        client.dropTable(null, "largedata", true);
-        HCatCreateTableDesc tableDesc = HCatCreateTableDesc.create(null, "largedata", cols).ifNotExists(true).build();
-        client.createTable(tableDesc);
-        WriteEntity.Builder writerbuilder = new WriteEntity.Builder();
+        /*WriteEntity.Builder writerbuilder = new WriteEntity.Builder();
         WriteEntity writerEntity = writerbuilder.withDatabase("default").withTable("largedata").build();
 
         HCatWriter writer = DataTransferFactory.getHCatWriter(writerEntity, config);
@@ -156,7 +172,7 @@ public class HCatalogExample extends Configured implements Tool {
         write.write(itr);
         writer.commit(writerContext);
         br.close();
-
+*/
 
 
         return 1;
@@ -173,13 +189,13 @@ public class HCatalogExample extends Configured implements Tool {
         public boolean hasNext() {
             try {
                 line = br.readLine();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             if (line == null) {
                 try {
                     br.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -199,6 +215,6 @@ public class HCatalogExample extends Configured implements Tool {
         @Override
         public void remove() {
             throw new RuntimeException();
-        }*/
+        }
     }
 }

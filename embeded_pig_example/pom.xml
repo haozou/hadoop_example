@@ -13,13 +13,47 @@
 
     <properties>
         <hcatalog.version>0.13.1-cdh5.2.0</hcatalog.version>
+        <tez.version>0.5.2.2.2.0.0-2041</tez.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.tez</groupId>
+            <artifactId>tez-api</artifactId>
+            <version>${tez.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tez</groupId>
+            <artifactId>tez-mapreduce</artifactId>
+            <version>${tez.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tez</groupId>
+            <artifactId>tez-dag</artifactId>
+            <version>${tez.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tez</groupId>
+            <artifactId>tez-common</artifactId>
+            <version>${tez.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tez</groupId>
+            <artifactId>tez-runtime-library</artifactId>
+            <version>${tez.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.alpine</groupId>
             <artifactId>alpine-pig_2.10</artifactId>
-            <version>0.12.0-cdh5.1.2-withouthadoop</version>
+            <version>0.15.0-withouthadoop</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/pig-0.14.0.2.2.0.0-2041-withouthadoop-h2.jar</systemPath>
         </dependency>
 
         <dependency>
