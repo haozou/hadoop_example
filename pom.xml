@@ -19,7 +19,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.7</java.version>
-        <hadoop.version>2.6.0.2.2.0.0-2041</hadoop.version>
+        <hadoop.version>2.6.0-cdh5.4.2</hadoop.version>
     </properties>
     <repositories>
         <repository>

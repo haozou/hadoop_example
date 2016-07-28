@@ -1,17 +1,21 @@
 package com.alpine.runner;
 import com.alpine.utility.Utilities;
+import com.google.common.io.FileBackedOutputStream;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.serde2.ByteStream;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hadoop.yarn.util.SystemClock;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.security.PrivilegedExceptionAction;
-import java.sql.SQLException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.DriverManager;
+import java.sql.*;
+import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by Hao on 5/19/16.
@@ -19,6 +23,15 @@ import java.util.Arrays;
 public class HiveServer2Example {
     private static String driverName = "org.apache.hive.jdbc.HiveDriver";
     public static void main(final String[] args) throws Exception {
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+        long ts = (long)1466759311588L;
+        System.out.println(ts);
+        Timestamp stamp = new Timestamp(ts);
+        Date date = new Date((long)stamp.getTime());
+        System.out.println(date);
+        OutputStream os = new FileOutputStream(new File("./test"));
+        os.write("nima".getBytes());
+        os.close();
         final Configuration conf = new Configuration();
         conf.set("hadoop.security.authentication", "kerberos");
         conf.set("connName", "jdbc:hive2://cdh5hakerberosnn.alpinenow.local:10000/default;principal=chorus/chorus.alpinenow.local@ALPINE");
@@ -47,7 +60,14 @@ public class HiveServer2Example {
         //replace "hive" here with the name of the user the queries should run as
         Connection con = DriverManager.getConnection("jdbc:hive2://cdh5hakerberosnn.alpinenow.local:10000/default;principal=hive/_HOST@ALPINE;hive.server2.proxy.user=hao");
         Statement stmt = con.createStatement();
-        stmt.execute("use auto_test_data");
+        try {
+            stmt.execute("describe nima.nima");
+        } catch (SQLException e) {
+            if (e.getMessage().contains("Database does not exist")) {
+                System.out.println("niman");
+            }
+            e.printStackTrace();
+        }
         stmt.execute("create table if not exists hao_test12 (`Id` int) ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' " +
                         "WITH SERDEPROPERTIES (\"casesensitive\"=\"Id\") " +
                         "STORED AS TEXTFILE");
@@ -67,6 +87,12 @@ public class HiveServer2Example {
                     System.out.println(res.getString(2).replaceAll(".*Table\\((.*)\\).*", "$1"));
                 }
             }
+        }
+
+        res = stmt.executeQuery("SELECT COUNT(*) FROM `auto_test_data.apple_customers`");
+
+        while (res.next()) {
+            System.out.println("nima:" + res.getString(1));
         }
 
         res = stmt.executeQuery("show databases");
